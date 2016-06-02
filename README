@@ -1,0 +1,7 @@
+Run the program with active_sports_stats.py. That should allow the user to make
+an inquiry about a skier and/or enter a new skier.
+
+ski_stats is the original data file.
+
+sports_stats_migration.py is the file used to read the original data into the
+database.
