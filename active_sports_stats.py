@@ -1,10 +1,10 @@
 import psycopg2
 
-connection = psycopg2.connect("dbname=learning_sql user=dbperson")
-cursor = connection.cursor()
+conn = psycopg2.connect("dbname=learning_sql user=dbperson")
+cur = conn.cursor()
 
 
-def skier_main():
+def skier_main(cursor, connection):
     print("This is a database of skiers from the 1988 Olympic Women's downhill.")
     user_inquiry = input("1: Lookup skier by name? \n"
                          "2: Add a new skier? \n"
@@ -13,30 +13,30 @@ def skier_main():
                          "5: Top skiers sorted by age\n"
                          "6: Quit? \n ").lower()
     if user_inquiry == '1':
-        skier_inquiry()
+        skier_inquiry(cursor, connection)
     elif user_inquiry == '3':
-        skier_old()
+        skier_old(cursor, connection)
     elif user_inquiry == '4':
-        skier_young()
+        skier_young(cursor, connection)
     elif user_inquiry == '2':
-        add_new_skier()
+        add_new_skier(cursor, connection)
     elif user_inquiry == '5':
-        skier_sort()
+        skier_sort(cursor, connection)
     else:
         print("Schussboomers unite! Bye Bye ")
 
 
-def skier_inquiry():
+def skier_inquiry(cursor, connection):
     hero = input("Enter a skier from the 1988 Olympics (hint: Karen Percy): ")
 
-    cursor.execute("select * from sports_data where athlete = %s;", (hero,))
+    cursor.execute("SELECT * FROM sports_data WHERE athlete = %s;", (hero,))
     results = cursor.fetchone()
     if results is None:
         user_add = input("Sorry, but skier name isn't in database. Want to add? Y/n ").lower()
         if user_add == 'y':
-            add_new_skier()
+            add_new_skier(cursor, connection)
         else:
-            skier_main()
+            skier_main(cursor, connection)
     else:
         print("Great memory! Excellent skier!")
         print("Skier: {}\n"
@@ -49,35 +49,36 @@ def skier_inquiry():
         if make_change == 'y':
             new_team = (input("Input new team country name "))
 
-            cursor.execute("UPDATE sports_data SET team = %s where athlete = %s;", (new_team, results[1]))
+            cursor.execute("UPDATE sports_data SET team = %s WHERE athlete = %s;", (new_team, results[1]))
             connection.commit()
             print("Thanks for the updated team info.")
         print('_' * 40)
-        skier_main()
+        skier_main(cursor, connection)
 
 
-def skier_old():
+def skier_old(cursor, connection):
     old_skiers = int(input("Enter cutoff age. Results will be that age or older. "))
-    cursor.execute("select * from sports_data where age >= %s;", (old_skiers,))
+    cursor.execute("SELECT * FROM sports_data WHERE age >= %s;", (old_skiers,))
     results = cursor.fetchall()
     print("Not too old to schuss like a pro.")
     for row in results:
         print("Age: {}, Skier: {}".format(row[2], row[1]))
     print('-' * 40)
-    skier_main()
+    skier_main(cursor, connection)
 
 
-def skier_young():
-    young_skiers = int(input("Enter cutoff age. Results will be age or younger. "))
-    cursor.execute("select * from sports_data where age <= %s;", (young_skiers,))
+def skier_young(cursor, connection):
+    young_skiers = int(input("Enter cutoff age. Results will be that age or younger. "))
+    cursor.execute("SELECT * FROM sports_data WHERE age <= %s;", (young_skiers,))
     results = cursor.fetchall()
     for row in results:
         print("Age: {}, Skier: {}".format(row[2], row[1]))
     print('-' * 40)
-    skier_main()
+    skier_main(cursor, connection)
 
 
-def add_new_skier():
+def add_new_skier(cursor, connection):
+    # add try/except to catch bad input
     athlete = input("What cartoon character should've competed in the 1988 Olympics? ")
     rank = int(input("Where would s/he have finished (1-25)? "))
     age = int(input("Age in 1988? "))
@@ -92,10 +93,10 @@ def add_new_skier():
 
     print("Thanks for adding to our database of excellent skiers from 1988.")
     print('-' * 40)
-    skier_main()
+    skier_main(cursor, connection)
 
 
-def skier_sort():
+def skier_sort(cursor, connection):
     rank = int(input("See the top skiers sorted by age by entering a ranking cutoff 1-30: "))
 
     cursor.execute("SELECT rank, athlete, age FROM sports_data "
@@ -105,9 +106,10 @@ def skier_sort():
     for row in results:
         print("Age: {}, Rank: {}, Skier: {}".format(row[2], row[0], row[1]))
     print('-' * 40)
-    skier_main()
+    skier_main(cursor, connection)
 
 
-skier_main()
-cursor.close()
-connection.close()
+skier_main(cur, conn)
+
+cur.close()
+conn.close()
