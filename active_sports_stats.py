@@ -20,16 +20,22 @@ def skier_inquiry():
 
     cursor.execute("select * from sports_data where athlete = %s;", (hero,))
     results = cursor.fetchone()
-
-    print("Great memory! Excellent skier!")
-    print("Skier: {}\n"
-          "Medal: {}\n"
-          "Rank: {}\n"
-          "Team: {}\n"
-          "Time: {}\n"
-          "Age: {}".format(results[1], results[5], results[0], results[3], results[6], results[2]))
-    print('_' * 40)
-    skier_main()
+    if results is None:
+        user_add = input("Sorry, but skier name isn't in database. Want to add? Y/n ").lower()
+        if user_add == 'y':
+            add_new_skier()
+        else:
+            skier_main()
+    else:
+        print("Great memory! Excellent skier!")
+        print("Skier: {}\n"
+              "Medal: {}\n"
+              "Rank: {}\n"
+              "Team: {}\n"
+              "Time: {}\n"
+              "Age: {}".format(results[1], results[5], results[0], results[3], results[6], results[2]))
+        print('_' * 40)
+        skier_main()
 
 
 def add_new_skier():
@@ -48,7 +54,6 @@ def add_new_skier():
     print("Thanks for adding to our database of excellent skiers from 1988.")
     print('-' * 40)
     skier_main()
-
 
 skier_main()
 cursor.close()
