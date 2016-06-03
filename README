@@ -1,5 +1,7 @@
 Run the program with active_sports_stats.py. That should allow the user to make
-an inquiry about a skier and/or enter a new skier.
+an inquiry about a skier and/or enter a new skier. One element of Hard Mode
+is included: Ability to update existing data. After looking up
+a skier, the user is given the chance to update the team country name.
 
 ski_stats is the original data file.
 
