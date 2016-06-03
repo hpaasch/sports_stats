@@ -10,7 +10,8 @@ def skier_main():
                          "A: Add a new skier? \n"
                          "O: List oldest skiers? \n"
                          "Y: List youngest skiers? \n"
-                         "Q: Quit? \nn/a/o/y/q ").lower()
+                         "T: Top skiers sorted by age\n"
+                         "Q: Quit? \nn/a/o/y/t/q ").lower()
     if user_inquiry == 'n':
         skier_inquiry()
     elif user_inquiry == 'o':
@@ -19,6 +20,8 @@ def skier_main():
         skier_young()
     elif user_inquiry == 'a':
         add_new_skier()
+    elif user_inquiry == 't':
+        skier_sort()
     else:
         print("Schussboomers unite! Bye Bye ")
 
@@ -90,6 +93,20 @@ def add_new_skier():
     print("Thanks for adding to our database of excellent skiers from 1988.")
     print('-' * 40)
     skier_main()
+
+
+def skier_sort():
+    rank = int(input("See the top skiers sorted by age by entering a ranking cutoff 1-30: "))
+
+    cursor.execute("SELECT rank, athlete, age FROM sports_data "
+                   "WHERE rank <= %s ORDER BY age DESC, rank ASC;", (rank,))
+    results = cursor.fetchall()
+    print("Top 10 skiers sorted by age:")
+    for row in results:
+        print("Age: {}, Rank: {}, Skier: {}".format(row[2], row[0], row[1]))
+    print('-' * 40)
+    skier_main()
+
 
 skier_main()
 cursor.close()
