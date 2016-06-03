@@ -24,7 +24,7 @@ def skier_main():
 
 
 def skier_inquiry():
-    hero = input("Enter skier from the 1988 Olympics (hint: Karen Percy): ")
+    hero = input("Enter a skier from the 1988 Olympics (hint: Karen Percy): ")
 
     cursor.execute("select * from sports_data where athlete = %s;", (hero,))
     results = cursor.fetchone()
@@ -42,6 +42,13 @@ def skier_inquiry():
               "Team: {}\n"
               "Time: {}\n"
               "Age: {}".format(results[1], results[5], results[0], results[3], results[6], results[2]))
+        make_change = input("Need to update team? Y/n ")
+        if make_change == 'y':
+            new_team = (input("Input new team country name "))
+
+            cursor.execute("UPDATE sports_data SET team = %s where athlete = %s;", (new_team, results[1]))
+            connection.commit()
+            print("Thanks for the updated team info.")
         print('_' * 40)
         skier_main()
 
@@ -50,6 +57,7 @@ def skier_old():
     old_skiers = int(input("Enter cutoff age. Results will be >= age. "))
     cursor.execute("select * from sports_data where age >= %s;", (old_skiers,))
     results = cursor.fetchall()
+    print("Not too old to schuss like a pro.")
     for row in results:
         print("Age: {}, Skier: {}".format(row[2], row[1]))
     print('-' * 40)
