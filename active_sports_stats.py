@@ -6,21 +6,21 @@ cursor = connection.cursor()
 
 def skier_main():
     print("This is a database of skiers from the 1988 Olympic Women's downhill.")
-    user_inquiry = input("N: Lookup skier by name? \n"
-                         "A: Add a new skier? \n"
-                         "O: List oldest skiers? \n"
-                         "Y: List youngest skiers? \n"
-                         "T: Top skiers sorted by age\n"
-                         "Q: Quit? \nn/a/o/y/t/q ").lower()
-    if user_inquiry == 'n':
+    user_inquiry = input("1: Lookup skier by name? \n"
+                         "2: Add a new skier? \n"
+                         "3: List oldest skiers? \n"
+                         "4: List youngest skiers? \n"
+                         "5: Top skiers sorted by age\n"
+                         "6: Quit? \n ").lower()
+    if user_inquiry == '1':
         skier_inquiry()
-    elif user_inquiry == 'o':
+    elif user_inquiry == '3':
         skier_old()
-    elif user_inquiry == 'y':
+    elif user_inquiry == '4':
         skier_young()
-    elif user_inquiry == 'a':
+    elif user_inquiry == '2':
         add_new_skier()
-    elif user_inquiry == 't':
+    elif user_inquiry == '5':
         skier_sort()
     else:
         print("Schussboomers unite! Bye Bye ")
@@ -57,7 +57,7 @@ def skier_inquiry():
 
 
 def skier_old():
-    old_skiers = int(input("Enter cutoff age. Results will be >= age. "))
+    old_skiers = int(input("Enter cutoff age. Results will be that age or older. "))
     cursor.execute("select * from sports_data where age >= %s;", (old_skiers,))
     results = cursor.fetchall()
     print("Not too old to schuss like a pro.")
@@ -68,7 +68,7 @@ def skier_old():
 
 
 def skier_young():
-    young_skiers = int(input("Enter cutoff age. Results will be <= age. "))
+    young_skiers = int(input("Enter cutoff age. Results will be age or younger. "))
     cursor.execute("select * from sports_data where age <= %s;", (young_skiers,))
     results = cursor.fetchall()
     for row in results:
