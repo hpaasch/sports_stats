@@ -79,16 +79,20 @@ def skier_young(cursor, connection):
 
 def add_new_skier(cursor, connection):
     # add try/except to catch bad input
-    athlete = input("What cartoon character should've competed in the 1988 Olympics? ")
-    rank = int(input("Where would s/he have finished (1-25)? "))
-    age = int(input("Age in 1988? "))
-    team = input("Perfect to represent what country? ")
-    noc = input("3-character country symbol is: ")
-    medal = input("Enter gold, silver or bronze: ")
-    t_time = input("How many seconds to finish what's usually a 90-second run? ")
+    try:
+        athlete = input("What cartoon character should've competed in the 1988 Olympics? ")
+        rank = (input("Where would s/he have finished (1-25)? "))
+        age = (input("Age in 1988? "))
+        team = input("Perfect to represent what country? ")
+        noc = input("3-character country symbol is: ")
+        medal = input("Enter gold, silver or bronze: ")
+        t_time = input("How many seconds to finish what's usually a 90-second run? ")
 
-    cursor.execute("INSERT INTO sports_data VALUES (%s, %s, %s, %s, %s, %s, %s);",
-                   (rank, athlete, age, team, noc, medal, t_time))
+        cursor.execute("INSERT INTO sports_data VALUES (%s, %s, %s, %s, %s, %s, %s);",
+                       (rank, athlete, age, team, noc, medal, t_time))
+    except psycopg2.DataError:
+        print("Bad input. Try again.")
+        # send somewhere. what was bad
     connection.commit()
 
     print("Thanks for adding to our database of excellent skiers from 1988.")
@@ -109,7 +113,7 @@ def skier_sort(cursor, connection):
     skier_main(cursor, connection)
 
 
-skier_main(cur, conn)
-
+# skier_main(cur, conn)
+add_new_skier(cur, conn)
 cur.close()
 conn.close()
