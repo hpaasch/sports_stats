@@ -10,3 +10,8 @@ ski_stats is the original data file.
 
 sports_stats_migration.py is the file used to read the original data into the
 database.
+
+User input that would generate errors is checked in Python as it is input,
+rather than the alternative of checking during the cursor execution. Less code
+to check at cursor execution, but kinder to the user to check as they input.
+(Credit my spouse with making me be kinder to the user.)
