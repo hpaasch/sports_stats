@@ -33,6 +33,7 @@ def skier_inquiry(cursor, connection):
     results = cursor.fetchone()
     if results is None:
         user_add = input("Sorry, but skier name isn't in database. Want to add? Y/n ").lower()
+        print('-' * 40)
         if user_add == 'y':
             add_new_skier(cursor, connection)
         else:
@@ -58,7 +59,7 @@ def skier_inquiry(cursor, connection):
 
 def skier_old(cursor, connection):
     old_skiers = int(input("Enter cutoff age. Results will be that age or older. "))
-    cursor.execute("SELECT * FROM sports_data WHERE age >= %s;", (old_skiers,))
+    cursor.execute("SELECT * FROM sports_data WHERE age >= %s ORDER BY age DESC;", (old_skiers,))
     results = cursor.fetchall()
     print("Not too old to schuss like a pro.")
     for row in results:
@@ -69,7 +70,7 @@ def skier_old(cursor, connection):
 
 def skier_young(cursor, connection):
     young_skiers = int(input("Enter cutoff age. Results will be that age or younger. "))
-    cursor.execute("SELECT * FROM sports_data WHERE age <= %s;", (young_skiers,))
+    cursor.execute("SELECT * FROM sports_data WHERE age <= %s ORDER BY age ASC;", (young_skiers,))
     results = cursor.fetchall()
     for row in results:
         print("Age: {}, Skier: {}".format(row[2], row[1]))
@@ -78,21 +79,27 @@ def skier_young(cursor, connection):
 
 
 def add_new_skier(cursor, connection):
-    # add try/except to catch bad input
-    try:
-        athlete = input("What cartoon character should've competed in the 1988 Olympics? ")
-        rank = (input("Where would s/he have finished (1-25)? "))
-        age = (input("Age in 1988? "))
-        team = input("Perfect to represent what country? ")
-        noc = input("3-character country symbol is: ")
-        medal = input("Enter gold, silver or bronze: ")
-        t_time = input("How many seconds to finish what's usually a 90-second run? ")
+    athlete = input("What cartoon character should've competed in the 1988 Olympics? ")
+    while True:
+        try:
+            rank = int(input("Where would s/he have finished (1-25)? "))
+            break
+        except ValueError:
+            print("Oopsies. Requires a 2-digit number only. Try again.")
+    while True:
+        try:
+            age = int(input("Age in 1988? "))
+            break
+        except ValueError:
+            print("Oopsies. Requires a 2-digit number only. Try again.")
+    team = input("Perfect to represent what country? ")
+    noc = input("3-character country symbol is: ")
+    medal = input("Enter gold, silver or bronze: ")
+    t_time = input("How many seconds to finish what's usually a 90-second run? ")
 
-        cursor.execute("INSERT INTO sports_data VALUES (%s, %s, %s, %s, %s, %s, %s);",
-                       (rank, athlete, age, team, noc, medal, t_time))
-    except psycopg2.DataError:
-        print("Bad input. Try again.")
-        # send somewhere. what was bad
+    cursor.execute("INSERT INTO sports_data VALUES (%s, %s, %s, %s, %s, %s, %s);",
+                   (rank, athlete, age, team, noc, medal, t_time))
+
     connection.commit()
 
     print("Thanks for adding to our database of excellent skiers from 1988.")
@@ -106,14 +113,13 @@ def skier_sort(cursor, connection):
     cursor.execute("SELECT rank, athlete, age FROM sports_data "
                    "WHERE rank <= %s ORDER BY age DESC, rank ASC;", (rank,))
     results = cursor.fetchall()
-    print("Top 10 skiers sorted by age:")
+    print("Skiers ranked at or above {}, sorted by age and then rank:".format(rank))
     for row in results:
         print("Age: {}, Rank: {}, Skier: {}".format(row[2], row[0], row[1]))
     print('-' * 40)
     skier_main(cursor, connection)
 
 
-# skier_main(cur, conn)
-add_new_skier(cur, conn)
+skier_main(cur, conn)
 cur.close()
 conn.close()
